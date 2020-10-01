@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f973025ac5821b987eae43ba0db652d54859bf814c562034b9f27bff41dc8e46
+-- hash: 9e651e713cc9bdd7e88a7250072b57f30ddeecb0b3384cf341ae8e761ea0861a
 
 name:           telegram-bot
 version:        0.1.0.0
@@ -34,15 +34,18 @@ library
       Api.Get.Update
       Api.Post.Button
       Api.Post.Keyboard
+      Api.Post.KeyboardMessage
       Api.Post.Message
+      Bot.Handler.Main
+      Bot.Handler.Utils
       Bot.Main
-      Bot.Message
       Bot.Model.Bot
       Bot.Model.BotError
       Bot.Model.Env
       Config.Model
       Runners.Basic
       Runners.File
+      Utils.Either
       Utils.File
   other-modules:
       Paths_telegram_bot

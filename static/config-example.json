@@ -1,4 +1,4 @@
 {
-  "url": "https://api.telegram.org",
-  "token": "your_token"
+  "url": "api.telegram.org",
+  "token": "bot<your_token>"
 }

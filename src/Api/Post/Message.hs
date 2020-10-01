@@ -5,10 +5,7 @@ module Api.Post.Message where
 import Data.Aeson
 import GHC.Generics
 
-import qualified Api.Post.Keyboard as Keyboard
-
 data Message = Message {
   chat_id :: Int,
-  text :: String,
-  reply_markup :: Keyboard.Keyboard
+  text :: String
 } deriving (Show, Generic, ToJSON)
