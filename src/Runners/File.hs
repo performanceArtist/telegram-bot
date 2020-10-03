@@ -11,5 +11,5 @@ run :: FilePath -> IO ()
 run filepath = File.readJSON filepath >>= either (showError >>> print) Basic.run
 
 showError :: File.ReadJSONError -> String
-showError (File.ReadError _) = "IO Error"
-showError (File.ParseError _) = "Failed to parse"
+showError (File.ReadError error) = "Error reading the config: " ++ (show error)
+showError (File.ParseError error) = "Failed to parse the config: " ++ (show error)

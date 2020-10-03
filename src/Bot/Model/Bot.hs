@@ -16,7 +16,7 @@ newtype Bot a = Bot {
 instance MonadHttp Bot where
   handleHttpException exception = throwError $ BotError.HTTPError $
     case exception of
-      VanillaHttpException _ -> "HTTP error"
+      VanillaHttpException error -> show error
       JsonHttpException error -> "Parsing error"
 
 run :: Bot a -> Env.Env -> IO (Either BotError.BotError a)

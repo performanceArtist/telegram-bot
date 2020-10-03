@@ -22,55 +22,62 @@ import Network.HTTP.Req
     LbsResponse(..)
   )
 import Data.Either (either)
-import Control.Monad.Except (throwError)
+import Control.Monad.Except (throwError, catchError)
 import Data.Text (pack)
 import Data.Monoid ((<>))
 import Data.Bool (bool)
+import Data.Foldable (traverse_)
+import Data.Functor (void)
+import Control.Monad.IO.Class (liftIO)
 
 import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.Env as Env
 import qualified Bot.Model.BotError as BotError
 import qualified Api.Get.Response
 import qualified Api.Get.Update
+import qualified Api.Post.Message
 import qualified Utils.Either
 import Bot.Handler.Main as Handler
 
-runBot :: Int -> Bot.Bot [String]
+runBot :: Int -> Bot.Bot ()
 runBot offset = do
-  baseURL <- asks getBaseURL
+  url <- asks $ makeURL ["getUpdates"]
   timeout <- asks Env.requestTimeout
-  let url = baseURL /: ("getUpdates" & pack)
   response <- req GET url NoReqBody lbsResponse $
     "offset" =: offset <> "timeout" =: timeout
-  let updates = getUpdates response
-  either throwError (traverse respond) updates
+  let updates = parseResponse response >>= getResponseResult
+  liftIO $ print (show updates)
+  either (const (return ())) (traverse_ respond) updates
   runBot (either (const 0) getNewOffset updates)
 
-getBaseURL :: Env.Env -> Url 'Https
-getBaseURL env = https base /: token
+makeURL :: [String] -> Env.Env -> Url 'Https
+makeURL parts env = foldl (/:) baseURL lbsParts
   where
     base = env & Env.url & pack
     token = env & Env.token & pack
+    baseURL = https base /: token
+    lbsParts = fmap pack parts
 
-getUpdates :: LbsResponse -> Either BotError.BotError [Api.Get.Update.Update]
-getUpdates response =
-  responseBody response
-  & Aeson.eitherDecode
-  & Bifunctor.first (const BotError.InvalidResponse)
-  >>= getResponseResult
+parseResponse :: LbsResponse -> Either BotError.BotError Api.Get.Response.Response
+parseResponse =
+  responseBody
+  >>> Aeson.eitherDecode
+  >>> Bifunctor.first (show >>> BotError.InvalidResponse)
 
 getResponseResult :: Api.Get.Response.Response -> Either BotError.BotError [Api.Get.Update.Update]
 getResponseResult =
   Utils.Either.fromPredicate Api.Get.Response.ok (const BotError.EmbeddedResponseError)
   >>> fmap Api.Get.Response.result
 
-respond :: Api.Get.Update.Update -> Bot.Bot String
+respond :: Api.Get.Update.Update -> Bot.Bot ()
 respond update = do
-  baseURL <- asks getBaseURL
-  let url = baseURL /: ("sendMessage" & pack)
-  let message = update & Handler.handle & ReqBodyJson
-  response <- req POST url message lbsResponse mempty
-  return $ response & responseBody & show
+  url <- asks $ makeURL ["sendMessage"]
+  message <- update & Handler.handle & recover
+  let onMessage = (\message -> void $ req POST url (ReqBodyJson message) lbsResponse mempty)
+  maybe (return ()) onMessage message
+
+recover :: Bot.Bot Api.Post.Message.Message -> Bot.Bot (Maybe Api.Post.Message.Message)
+recover message = catchError (fmap Just message) (const (return Nothing))
 
 getNewOffset :: [Api.Get.Update.Update] -> Int
 getNewOffset [] = 0

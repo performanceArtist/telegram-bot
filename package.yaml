@@ -26,6 +26,8 @@ dependencies:
 - bytestring
 - text
 - mtl
+- parsec
+- random
 
 library:
   source-dirs: src

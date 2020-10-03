@@ -16,4 +16,4 @@ run config =
 
 showError :: BotError.BotError -> String
 showError (BotError.HTTPError error) = "HTTP error: " ++ error
-showError BotError.InvalidResponse = "Failed to parse the response"
+showError (BotError.InvalidResponse response) = "Failed to parse the response: " ++ response
