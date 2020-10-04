@@ -29,6 +29,7 @@ import Data.Bool (bool)
 import Data.Foldable (traverse_)
 import Data.Functor (void)
 import Control.Monad.IO.Class (liftIO)
+import Control.Monad.State (get)
 
 import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.Env as Env
@@ -46,7 +47,8 @@ runBot offset = do
   response <- req GET url NoReqBody lbsResponse $
     "offset" =: offset <> "timeout" =: timeout
   let updates = parseResponse response >>= getResponseResult
-  liftIO $ print (show updates)
+  state <- get
+  liftIO $ print $ show updates ++ " State: " ++ show state
   either (const (return ())) (traverse_ respond) updates
   runBot (either (const 0) getNewOffset updates)
 

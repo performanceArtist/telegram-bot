@@ -5,5 +5,6 @@ startMessage =
   unlines $ [
     "Wuss poppin' B?",
     "/start",
-    "/say &(echo|gangsta) <text>"
+    "/say &(echo|gangsta) <text>",
+    "/quiz"
   ]

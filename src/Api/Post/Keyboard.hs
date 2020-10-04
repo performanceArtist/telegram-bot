@@ -8,5 +8,6 @@ import GHC.Generics
 import qualified Api.Post.Button as Button
 
 data Keyboard = Keyboard {
-  keyboard :: [[Button.Button]]
+  keyboard :: [[Button.Button]],
+  one_time_keyboard :: Bool
 } deriving (Show, Generic, ToJSON)

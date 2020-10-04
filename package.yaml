@@ -28,6 +28,7 @@ dependencies:
 - mtl
 - parsec
 - random
+- unordered-containers
 
 library:
   source-dirs: src
