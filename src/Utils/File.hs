@@ -15,6 +15,4 @@ data ReadJSONError = ReadError IOError | ParseError String
 readJSON :: FromJSON a => FilePath -> IO (Either ReadJSONError a)
 readJSON filepath = do
   content <- filepath & safeReadFile & fmap (Bifunctor.first ReadError)
-  return $ case content of
-    Left error -> Left error
-    Right content -> content & BSL.pack & eitherDecode & Bifunctor.first ParseError
+  return $ content >>= (BSL.pack >>> eitherDecode >>> Bifunctor.first ParseError)

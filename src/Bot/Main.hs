@@ -50,7 +50,7 @@ runBot offset = do
   state <- get
   liftIO $ print $ show updates ++ " State: " ++ show state
   either (const (return ())) (traverse_ respond) updates
-  runBot (either (const 0) getNewOffset updates)
+  runBot $ either (const 0) getNewOffset updates
 
 makeURL :: [String] -> Env.Env -> Url 'Https
 makeURL parts env = foldl (/:) baseURL lbsParts
