@@ -1,86 +1,50 @@
 module Bot.Main (runBot) where
 
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.State (gets)
+import Control.Monad (forever)
+import Data.IORef (writeIORef, readIORef)
 import Data.Function ((&))
-import Control.Arrow ((>>>))
-import Control.Monad.Reader (asks)
-import Data.Bifunctor as Bifunctor
-import Data.Aeson as Aeson
 import Network.HTTP.Req
   (
     req,
     NoReqBody(..),
     lbsResponse,
-    responseBody,
-    GET(..),
-    POST(..),
-    (/:),
-    Url(),
-    Scheme(..),
-    https,
     (=:),
-    ReqBodyJson(..),
-    LbsResponse(..)
+    GET(..)
   )
-import Data.Either (either)
-import Control.Monad.Except (throwError, catchError)
-import Data.Text (pack)
-import Data.Monoid ((<>))
-import Data.Bool (bool)
-import Data.Foldable (traverse_)
-import Data.Functor (void)
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.State (get)
+import Control.Monad.Reader (asks)
+import qualified Data.Set as Set
+import Control.Monad.State (get, put)
 
 import qualified Bot.Model.Bot as Bot
-import qualified Bot.Model.Env as Env
-import qualified Bot.Model.BotError as BotError
-import qualified Api.Get.Response
-import qualified Api.Get.Update
-import qualified Api.Post.Message
-import qualified Utils.Either
 import Bot.Handler.Main as Handler
+import qualified Bot.Model.BotState as BotState
+import qualified Bot.Model.Env as Env
+import Bot.Utils (makeURL, parseUpdates, getNewOffset, findMessage, getChatID)
+import qualified Api.Get.Message
 
-runBot :: Int -> Bot.Bot ()
-runBot offset = do
+runBot :: Bot.Bot ()
+runBot = forever $ do
   url <- asks $ makeURL ["getUpdates"]
   timeout <- asks Env.requestTimeout
+  offset <- gets BotState.offset
   response <- req GET url NoReqBody lbsResponse $
     "offset" =: offset <> "timeout" =: timeout
-  let updates = parseResponse response >>= getResponseResult
+  let updates = either (const []) id (parseUpdates response)
+  updatesRef <- gets BotState.updates
+  writeIORef updatesRef updates & liftIO
+  show updates & print & liftIO
+  handleOrIgnore (findMessage updates)
   state <- get
-  liftIO $ print $ show updates ++ " State: " ++ show state
-  either (const (return ())) (traverse_ respond) updates
-  runBot $ either (const 0) getNewOffset updates
+  put state { BotState.offset = getNewOffset updates offset }
 
-makeURL :: [String] -> Env.Env -> Url 'Https
-makeURL parts env = foldl (/:) baseURL lbsParts
-  where
-    base = env & Env.url & pack
-    token = env & Env.token & pack
-    baseURL = https base /: token
-    lbsParts = fmap pack parts
-
-parseResponse :: LbsResponse -> Either BotError.BotError Api.Get.Response.Response
-parseResponse =
-  responseBody
-  >>> Aeson.eitherDecode
-  >>> Bifunctor.first (show >>> BotError.InvalidResponse)
-
-getResponseResult :: Api.Get.Response.Response -> Either BotError.BotError [Api.Get.Update.Update]
-getResponseResult =
-  Utils.Either.fromPredicate Api.Get.Response.ok (const BotError.EmbeddedResponseError)
-  >>> fmap Api.Get.Response.result
-
-respond :: Api.Get.Update.Update -> Bot.Bot ()
-respond update = do
-  url <- asks $ makeURL ["sendMessage"]
-  message <- update & Handler.handle & recover
-  let onMessage = (\message -> void $ req POST url (ReqBodyJson message) lbsResponse mempty)
-  maybe (return ()) onMessage message
-
-recover :: Bot.Bot Api.Post.Message.Message -> Bot.Bot (Maybe Api.Post.Message.Message)
-recover message = catchError (fmap Just message) (const (return Nothing))
-
-getNewOffset :: [Api.Get.Update.Update] -> Int
-getNewOffset [] = 0
-getNewOffset update = last update & Api.Get.Update.update_id & (+1)
+handleOrIgnore :: Maybe Api.Get.Message.Message -> Bot.Bot ()
+handleOrIgnore Nothing = return ()
+handleOrIgnore (Just message) = do
+  let chatID = getChatID message
+  forkedChatIDsRef <- gets BotState.forkedChatIDs
+  chatIDs <- liftIO $ readIORef forkedChatIDsRef
+  if Set.member chatID chatIDs
+    then return ()
+    else Handler.handle message

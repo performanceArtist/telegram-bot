@@ -7,5 +7,5 @@ import Bot.Parser.Utils (makeCommand)
 
 start :: Parser Command
 start = do
-  makeCommand "start"
+  _ <- makeCommand "start"
   return Start

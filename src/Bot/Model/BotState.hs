@@ -1,11 +1,17 @@
 module Bot.Model.BotState where
 
-import Data.HashMap.Strict (HashMap)
+import Data.IORef (IORef(..))
+import Data.Set (Set())
 
-import Bot.Parser.Model (Command())
+import qualified Api.Get.Update
 
-type ChatID = Int
+newtype ChatID = ChatID Int deriving (Eq, Show, Ord)
 
-type PendingCommand = Command
+toInt :: ChatID -> Int
+toInt (ChatID chatID) = chatID
 
-type BotState = HashMap ChatID PendingCommand
+data BotState = BotState {
+  offset :: Int,
+  updates :: IORef [Api.Get.Update.Update],
+  forkedChatIDs :: IORef (Set ChatID)
+}

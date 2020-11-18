@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7d014b6d3abe59964479462229c175e226b580503adc53c8f21cc3bcde980895
+-- hash: 4e379e93e39c85bd6c9f43bb682005b98a7f63edf82c321e4bdc7daf7e73ae60
 
 name:           telegram-bot
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Api.Get.Chat
+      Api.Get.Contact
       Api.Get.From
       Api.Get.Message
       Api.Get.Response
@@ -35,8 +36,10 @@ library
       Api.Post.Button
       Api.Post.Keyboard
       Api.Post.Message
+      Bot.Fork
       Bot.Handler.Main
       Bot.Handler.Quiz
+      Bot.Handler.Register
       Bot.Handler.Say
       Bot.Handler.Start
       Bot.Handler.Utils
@@ -45,12 +48,16 @@ library
       Bot.Model.BotError
       Bot.Model.BotState
       Bot.Model.Env
+      Bot.Model.Handler
       Bot.Parser.Main
       Bot.Parser.Model
       Bot.Parser.Quiz
+      Bot.Parser.Register
       Bot.Parser.Say
       Bot.Parser.Start
       Bot.Parser.Utils
+      Bot.Poll
+      Bot.Utils
       Config.Model
       Runners.Basic
       Runners.File
@@ -65,12 +72,12 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , mtl
     , parsec
     , random
     , req
     , text
-    , unordered-containers
   default-language: Haskell2010
 
 executable telegram-bot-exe
@@ -85,13 +92,13 @@ executable telegram-bot-exe
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , mtl
     , parsec
     , random
     , req
     , telegram-bot
     , text
-    , unordered-containers
   default-language: Haskell2010
 
 test-suite telegram-bot-test
@@ -107,11 +114,11 @@ test-suite telegram-bot-test
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , mtl
     , parsec
     , random
     , req
     , telegram-bot
     , text
-    , unordered-containers
   default-language: Haskell2010

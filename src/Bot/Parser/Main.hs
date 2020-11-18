@@ -8,9 +8,10 @@ import Bot.Parser.Utils (parseWithWhitespace)
 import Bot.Parser.Say (say)
 import Bot.Parser.Start (start)
 import Bot.Parser.Quiz (quiz)
+import Bot.Parser.Register (register)
 
 parser :: Parser Command
-parser = try start <|> try say <|> quiz
+parser = try start <|> try say <|> try quiz <|> register
 
 parse :: String -> Either ParseError Command
 parse input = parseWithWhitespace parser input

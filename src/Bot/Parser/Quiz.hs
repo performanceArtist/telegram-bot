@@ -7,5 +7,5 @@ import Bot.Parser.Utils (makeCommand)
 
 quiz :: Parser Command
 quiz = do
-  makeCommand "quiz"
+  _ <- makeCommand "quiz"
   return Quiz

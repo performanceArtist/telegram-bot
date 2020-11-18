@@ -1,3 +1,5 @@
 module Bot.Model.BotError where
 
-data BotError = InvalidResponse String | HTTPError String | EmbeddedResponseError | LogicError String deriving (Show)
+import qualified Api.Post.Message
+
+data BotError = InvalidResponse String | HTTPError String | EmbeddedResponseError | LogicError String | UserError Api.Post.Message.Message deriving (Show)

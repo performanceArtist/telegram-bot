@@ -6,5 +6,6 @@ startMessage =
     "Wuss poppin' B?",
     "/start",
     "/say &(echo|gangsta) <text>",
-    "/quiz"
+    "/quiz",
+    "/register"
   ]
