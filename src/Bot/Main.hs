@@ -1,10 +1,12 @@
 module Bot.Main (runBot) where
 
+import           Control.Arrow ((>>>))
 import           Control.Monad (forever)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Reader (asks)
 import           Control.Monad.State (gets)
 import           Control.Monad.State (get, put)
+import           Data.Foldable (traverse_)
 import           Data.Function ((&))
 import           Data.IORef (readIORef, writeIORef)
 import qualified Data.Set as Set
@@ -12,12 +14,12 @@ import           Network.HTTP.Req (GET (..), NoReqBody (..), lbsResponse, req,
                                    (=:))
 
 import qualified Api.Get.Message
+import qualified Api.Get.Update
 import           Bot.Handler.Main as Handler
 import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.BotState as BotState
 import qualified Bot.Model.Env as Env
-import           Bot.Utils (findMessage, getChatID, getNewOffset, makeURL,
-                            parseUpdates)
+import           Bot.Utils (getChatID, getNewOffset, makeURL, parseUpdates)
 
 runBot :: Bot.Bot ()
 runBot = forever $ do
@@ -30,7 +32,7 @@ runBot = forever $ do
   updatesRef <- gets BotState.updates
   writeIORef updatesRef updates & liftIO
   show updates & print & liftIO
-  handleOrIgnore (findMessage updates)
+  traverse_ (Api.Get.Update.message >>> handleOrIgnore) updates
   state <- get
   put state { BotState.offset = getNewOffset updates offset }
 

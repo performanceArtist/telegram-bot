@@ -33,4 +33,4 @@ keyboardMessage message keyboard text = Api.Post.Message.Message {
 }
 
 plainButton :: String -> Api.Post.Button.Button
-plainButton text = Api.Post.Button.Button { Api.Post.Button.text = text, Api.Post.Button.request_contact = Nothing }
+plainButton text = Api.Post.Button.Button { Api.Post.Button.text = text, Api.Post.Button.request_contact = Just False }

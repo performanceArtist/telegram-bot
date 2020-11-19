@@ -31,5 +31,5 @@ keyboard =
 getAnswer :: Api.Get.Message.Message -> PollState Api.Post.Message.Message String
 getAnswer message =
   if Api.Get.Message.text message == (Just rightAnswer)
-    then EndWith $ "Wrong answer man"
-    else EndWith $ "Oh yea"
+    then EndWith $ "Oh yea"
+    else EndWith $ "Wrong answer man"

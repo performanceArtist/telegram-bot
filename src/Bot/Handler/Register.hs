@@ -21,7 +21,7 @@ register message = do
   name <- pollMessage getName
   sendMessage $ textMessage message "Gib email"
   email <- pollMessage getEmail
-  sendMessage $ textMessage message ("Oh yea: " ++ phoneNumber ++ name ++ email)
+  sendMessage $ textMessage message (unlines ["Big mcthankies from mcspankies: ", phoneNumber, name, email])
 
 keyboard :: [[Button.Button]]
 keyboard =

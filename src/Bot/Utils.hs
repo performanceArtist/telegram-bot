@@ -1,6 +1,5 @@
 module Bot.Utils where
 
-import           Control.Applicative ((<|>))
 import           Control.Arrow ((>>>))
 import           Control.Monad.Reader (asks)
 import           Data.Aeson as Aeson
@@ -51,10 +50,6 @@ sendMessage :: Api.Post.Message.Message -> Bot.Bot ()
 sendMessage message = do
   url <- asks $ makeURL ["sendMessage"]
   void $ req POST url (ReqBodyJson message) lbsResponse mempty
-
-findMessage :: [Api.Get.Update.Update] -> Maybe Api.Get.Message.Message
-findMessage []     = Nothing
-findMessage (u:us) = Api.Get.Update.message u <|> (findMessage us)
 
 getChatID :: Api.Get.Message.Message -> BotState.ChatID
 getChatID = Api.Get.Message.chat >>> Api.Get.Chat.id >>> BotState.ChatID
