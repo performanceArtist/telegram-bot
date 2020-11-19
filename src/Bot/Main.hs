@@ -1,28 +1,23 @@
 module Bot.Main (runBot) where
 
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.State (gets)
-import Control.Monad (forever)
-import Data.IORef (writeIORef, readIORef)
-import Data.Function ((&))
-import Network.HTTP.Req
-  (
-    req,
-    NoReqBody(..),
-    lbsResponse,
-    (=:),
-    GET(..)
-  )
-import Control.Monad.Reader (asks)
+import           Control.Monad (forever)
+import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.Reader (asks)
+import           Control.Monad.State (gets)
+import           Control.Monad.State (get, put)
+import           Data.Function ((&))
+import           Data.IORef (readIORef, writeIORef)
 import qualified Data.Set as Set
-import Control.Monad.State (get, put)
+import           Network.HTTP.Req (GET (..), NoReqBody (..), lbsResponse, req,
+                                   (=:))
 
+import qualified Api.Get.Message
+import           Bot.Handler.Main as Handler
 import qualified Bot.Model.Bot as Bot
-import Bot.Handler.Main as Handler
 import qualified Bot.Model.BotState as BotState
 import qualified Bot.Model.Env as Env
-import Bot.Utils (makeURL, parseUpdates, getNewOffset, findMessage, getChatID)
-import qualified Api.Get.Message
+import           Bot.Utils (findMessage, getChatID, getNewOffset, makeURL,
+                            parseUpdates)
 
 runBot :: Bot.Bot ()
 runBot = forever $ do

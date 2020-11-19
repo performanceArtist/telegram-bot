@@ -1,16 +1,16 @@
 module Bot.Handler.Register (register) where
 
-import Data.Function ((&))
-import Data.Maybe (maybe)
+import           Data.Function ((&))
+import           Data.Maybe (maybe)
 
-import qualified Api.Get.Message
-import qualified Api.Post.Message
-import Bot.Handler.Utils (textMessage, keyboardMessage)
-import qualified Api.Post.Button as Button
 import qualified Api.Get.Contact
-import Bot.Poll (pollMessage, PollState(..))
-import Bot.Utils (sendMessage)
-import Bot.Model.Handler as BotHandler
+import qualified Api.Get.Message
+import qualified Api.Post.Button as Button
+import qualified Api.Post.Message
+import           Bot.Handler.Utils (keyboardMessage, textMessage)
+import           Bot.Model.Handler as BotHandler
+import           Bot.Poll (PollState (..), pollMessage)
+import           Bot.Utils (sendMessage)
 
 register :: BotHandler.BotHandler
 register message = do

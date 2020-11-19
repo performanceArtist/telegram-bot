@@ -1,16 +1,16 @@
 module Runners.Basic (run) where
 
-import Data.Either (either)
-import Control.Arrow ((>>>))
-import Data.IORef (newIORef)
+import           Control.Arrow ((>>>))
+import           Data.Either (either)
+import           Data.IORef (newIORef)
 import qualified Data.Set as Set
 
+import           Bot.Main (runBot)
 import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.BotError as BotError
-import qualified Bot.Model.Env as Env
 import qualified Bot.Model.BotState as BotState
+import qualified Bot.Model.Env as Env
 import qualified Config.Model as Config
-import Bot.Main (runBot)
 
 run :: Config.Config -> IO ()
 run config = do

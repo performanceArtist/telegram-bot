@@ -1,25 +1,25 @@
 module Bot.Utils where
 
-import Network.HTTP.Req
-import Data.Text (pack)
-import Data.Bifunctor as Bifunctor
-import Data.Aeson as Aeson
-import Data.Function ((&))
-import Control.Arrow ((>>>))
-import Control.Monad.Reader (asks)
-import Data.Functor (void)
-import Control.Applicative ((<|>))
+import           Control.Applicative ((<|>))
+import           Control.Arrow ((>>>))
+import           Control.Monad.Reader (asks)
+import           Data.Aeson as Aeson
+import           Data.Bifunctor as Bifunctor
+import           Data.Function ((&))
+import           Data.Functor (void)
+import           Data.Text (pack)
+import           Network.HTTP.Req
 
-import qualified Bot.Model.Env as Env
+import qualified Api.Get.Chat
+import qualified Api.Get.Message
+import qualified Api.Get.Response
 import qualified Api.Get.Update
 import qualified Api.Post.Message
-import qualified Api.Get.Message
+import           Bot.Model.Bot as Bot
 import qualified Bot.Model.BotError as BotError
-import qualified Api.Get.Response
-import qualified Utils.Either
-import Bot.Model.Bot as Bot
 import qualified Bot.Model.BotState as BotState
-import qualified Api.Get.Chat
+import qualified Bot.Model.Env as Env
+import qualified Utils.Either
 
 makeURL :: [String] -> Env.Env -> Url 'Https
 makeURL parts env = foldl (/:) baseURL lbsParts
@@ -45,7 +45,7 @@ parseUpdates r = (parseResponse r) >>= getResponseResult
 
 getNewOffset :: [Api.Get.Update.Update] -> Int -> Int
 getNewOffset [] oldOffset = oldOffset
-getNewOffset update _ = last update & Api.Get.Update.update_id & (+1)
+getNewOffset update _     = last update & Api.Get.Update.update_id & (+1)
 
 sendMessage :: Api.Post.Message.Message -> Bot.Bot ()
 sendMessage message = do
@@ -53,7 +53,7 @@ sendMessage message = do
   void $ req POST url (ReqBodyJson message) lbsResponse mempty
 
 findMessage :: [Api.Get.Update.Update] -> Maybe Api.Get.Message.Message
-findMessage [] = Nothing
+findMessage []     = Nothing
 findMessage (u:us) = Api.Get.Update.message u <|> (findMessage us)
 
 getChatID :: Api.Get.Message.Message -> BotState.ChatID

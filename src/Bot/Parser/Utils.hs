@@ -1,12 +1,12 @@
 module Bot.Parser.Utils where
 
-import Text.Parsec (ParseError, parse, many, string)
-import Text.Parsec.String (Parser)
-import Control.Applicative ((<*), (*>))
-import Text.Parsec.Combinator (eof)
-import Text.Parsec.Char (oneOf)
-import Data.Functor (void)
-import Data.Function ((&))
+import           Control.Applicative ((*>), (<*))
+import           Data.Function ((&))
+import           Data.Functor (void)
+import           Text.Parsec (ParseError, many, parse, string)
+import           Text.Parsec.Char (oneOf)
+import           Text.Parsec.Combinator (eof)
+import           Text.Parsec.String (Parser)
 
 parseBasic :: Parser a -> String -> Either ParseError a
 parseBasic parser = parse parser ""

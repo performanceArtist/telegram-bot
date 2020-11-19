@@ -1,11 +1,11 @@
 module Bot.Parser.Say (say) where
 
-import Text.Parsec.String (Parser)
-import Text.Parsec (many1, try, (<|>))
-import Text.Parsec.Char (anyChar)
+import           Text.Parsec (many1, try, (<|>))
+import           Text.Parsec.Char (anyChar)
+import           Text.Parsec.String (Parser)
 
-import Bot.Parser.Model (Command(..), SayFlag(..))
-import Bot.Parser.Utils (makeFlag, makeCommand, lexeme)
+import           Bot.Parser.Model (Command (..), SayFlag (..))
+import           Bot.Parser.Utils (lexeme, makeCommand, makeFlag)
 
 gangsta :: Parser SayFlag
 gangsta = do

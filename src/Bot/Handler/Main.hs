@@ -1,24 +1,24 @@
 module Bot.Handler.Main (handle) where
 
-import Data.Function ((&))
-import Control.Arrow ((>>>))
-import Data.Either (either)
-import Control.Monad.IO.Class (liftIO)
-import Data.Bifunctor as Bifunctor
+import           Control.Arrow ((>>>))
+import           Control.Monad.IO.Class (liftIO)
+import           Data.Bifunctor as Bifunctor
+import           Data.Either (either)
+import           Data.Function ((&))
 
 import qualified Api.Get.Message
-import Bot.Parser.Main (parse)
-import Bot.Parser.Model (Command(..), SayFlag(..))
-import Bot.Model.Bot as Bot
-import Bot.Model.Handler as BotHandler
-import Bot.Handler.Start (startMessage)
-import Bot.Handler.Say (sayGangsta)
-import Bot.Handler.Quiz (quiz)
-import Bot.Handler.Register (register)
-import Utils.Either (fromMaybe)
-import Bot.Utils (sendMessage)
-import Bot.Handler.Utils (textMessage)
-import Bot.Fork (forkHandler)
+import           Bot.Fork (forkHandler)
+import           Bot.Handler.Quiz (quiz)
+import           Bot.Handler.Register (register)
+import           Bot.Handler.Say (sayGangsta)
+import           Bot.Handler.Start (startMessage)
+import           Bot.Handler.Utils (textMessage)
+import           Bot.Model.Bot as Bot
+import           Bot.Model.Handler as BotHandler
+import           Bot.Parser.Main (parse)
+import           Bot.Parser.Model (Command (..), SayFlag (..))
+import           Bot.Utils (sendMessage)
+import           Utils.Either (fromMaybe)
 
 handle :: BotHandler.BotHandler
 handle message = either makeParseErrorMessage (handleCommandMessage message) command

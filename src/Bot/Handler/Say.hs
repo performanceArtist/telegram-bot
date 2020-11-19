@@ -1,9 +1,9 @@
 module Bot.Handler.Say (sayGangsta) where
 
-import System.Random (randomIO)
-import Control.Monad (replicateM)
-import Data.Char (toUpper)
-import Data.Bool (bool)
+import           Control.Monad (replicateM)
+import           Data.Bool (bool)
+import           Data.Char (toUpper)
+import           System.Random (randomIO)
 
 sayGangsta :: String -> IO String
 sayGangsta input = do

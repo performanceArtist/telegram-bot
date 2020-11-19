@@ -1,7 +1,7 @@
 module Runners.File (run) where
 
-import Data.Either (either)
-import Control.Arrow ((>>>))
+import           Control.Arrow ((>>>))
+import           Data.Either (either)
 
 import qualified Runners.Basic as Basic
 import qualified Utils.File as File

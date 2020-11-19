@@ -1,18 +1,18 @@
 module Bot.Poll where
 
-import Control.Monad.State (get, gets, put)
-import Control.Arrow ((>>>))
-import Data.Maybe (maybe)
-import Data.IORef (readIORef)
-import Control.Monad.IO.Class (liftIO)
-import Control.Concurrent (threadDelay)
+import           Control.Arrow ((>>>))
+import           Control.Concurrent (threadDelay)
+import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.State (get, gets, put)
+import           Data.IORef (readIORef)
+import           Data.Maybe (maybe)
 
-import Bot.Utils (getNewOffset, sendMessage, findMessage)
-import qualified Bot.Model.Bot as Bot
+import qualified Api.Get.Message
 import qualified Api.Get.Update
 import qualified Api.Post.Message
+import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.BotState as BotState
-import qualified Api.Get.Message
+import           Bot.Utils (findMessage, getNewOffset, sendMessage)
 
 data PollState a b = Continue | ContinueWith a | EndWith b
 

@@ -1,13 +1,13 @@
 module Bot.Handler.Utils where
 
-import Data.Function ((&))
+import           Data.Function ((&))
 
-import qualified Api.Post.Keyboard
-import qualified Api.Post.Button
-import qualified Api.Post.Message
 import qualified Api.Get.Message
+import qualified Api.Post.Button
+import qualified Api.Post.Keyboard
+import qualified Api.Post.Message
 import qualified Bot.Model.BotState as BotState
-import Bot.Utils (getChatID)
+import           Bot.Utils (getChatID)
 
 textMessage :: Api.Get.Message.Message -> String -> Api.Post.Message.Message
 textMessage message text = Api.Post.Message.Message {

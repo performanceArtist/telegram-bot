@@ -1,11 +1,11 @@
 module Utils.File (safeReadFile, readJSON, ReadJSONError(..)) where
 
-import Control.Exception (try)
-import Control.Arrow ((>>>))
-import Data.Function ((&))
+import           Control.Arrow ((>>>))
+import           Control.Exception (try)
+import           Data.Aeson (FromJSON, eitherDecode)
 import qualified Data.Bifunctor as Bifunctor
 import qualified Data.ByteString.Lazy.Char8 as BSL
-import Data.Aeson (eitherDecode, FromJSON())
+import           Data.Function ((&))
 
 safeReadFile :: FilePath -> IO (Either IOError String)
 safeReadFile= readFile >>> try

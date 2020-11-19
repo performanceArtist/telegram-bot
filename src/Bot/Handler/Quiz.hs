@@ -1,12 +1,12 @@
 module Bot.Handler.Quiz (quiz) where
 
 import qualified Api.Get.Message
-import qualified Api.Post.Message
-import Bot.Handler.Utils (textMessage, keyboardMessage, plainButton)
 import qualified Api.Post.Button as Button
-import Bot.Utils (sendMessage)
-import Bot.Poll (pollMessage, PollState(..))
-import Bot.Model.Handler as BotHandler
+import qualified Api.Post.Message
+import           Bot.Handler.Utils (keyboardMessage, plainButton, textMessage)
+import           Bot.Model.Handler as BotHandler
+import           Bot.Poll (PollState (..), pollMessage)
+import           Bot.Utils (sendMessage)
 
 quiz :: BotHandler.BotHandler
 quiz message = do
