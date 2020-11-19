@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4e379e93e39c85bd6c9f43bb682005b98a7f63edf82c321e4bdc7daf7e73ae60
+-- hash: 51ee27fedf9b83a0d398f3116569c250daa54a76cb64a155ff5e9412b50d8303
 
 name:           telegram-bot
 version:        0.1.0.0
@@ -63,6 +63,7 @@ library
       Runners.File
       Utils.Either
       Utils.File
+      Utils.List
   other-modules:
       Paths_telegram_bot
   hs-source-dirs:

@@ -9,11 +9,12 @@ import qualified Api.Post.Button as Button
 import qualified Api.Post.Message
 import           Bot.Handler.Utils (keyboardMessage, textMessage)
 import           Bot.Model.Handler as BotHandler
-import           Bot.Poll (PollState (..), pollMessage)
-import           Bot.Utils (sendMessage)
+import           Bot.Poll (PollState (..), makePollMessage)
+import           Bot.Utils (getChatID, sendMessage)
 
 register :: BotHandler.BotHandler
 register message = do
+  let pollMessage = makePollMessage (getChatID message)
   sendMessage $ keyboardMessage message keyboard "Send phone"
   phoneNumber <- pollMessage getPhone
   sendMessage $ textMessage message "Gib name"

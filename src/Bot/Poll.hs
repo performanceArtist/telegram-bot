@@ -1,7 +1,8 @@
-module Bot.Poll where
+module Bot.Poll (makePollMessage, PollState(..)) where
 
 import           Control.Arrow ((>>>))
 import           Control.Concurrent (threadDelay)
+import           Control.Monad (join, mfilter)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.State (get, gets, put)
 import           Data.IORef (readIORef)
@@ -12,7 +13,8 @@ import qualified Api.Get.Update
 import qualified Api.Post.Message
 import qualified Bot.Model.Bot as Bot
 import qualified Bot.Model.BotState as BotState
-import           Bot.Utils (findMessage, getNewOffset, sendMessage)
+import           Bot.Utils (getChatID, getNewOffset, sendMessage)
+import           Utils.List (safeHead)
 
 data PollState a b = Continue | ContinueWith a | EndWith b
 
@@ -35,5 +37,6 @@ pollState f = do
           sendMessage message
           pollState f
 
-pollMessage :: (Api.Get.Message.Message -> PollState Api.Post.Message.Message b) -> Bot.Bot b
-pollMessage f = pollState $ findMessage >>> (maybe Continue f)
+makePollMessage :: BotState.ChatID -> (Api.Get.Message.Message -> PollState Api.Post.Message.Message b) -> Bot.Bot b
+makePollMessage chatID f = pollState $ byChat >>> safeHead >>> join >>> (maybe Continue f)
+  where byChat = fmap (Api.Get.Update.message >>> mfilter (getChatID >>> (== chatID)))

@@ -5,11 +5,12 @@ import qualified Api.Post.Button as Button
 import qualified Api.Post.Message
 import           Bot.Handler.Utils (keyboardMessage, plainButton, textMessage)
 import           Bot.Model.Handler as BotHandler
-import           Bot.Poll (PollState (..), pollMessage)
-import           Bot.Utils (sendMessage)
+import           Bot.Poll (PollState (..), makePollMessage)
+import           Bot.Utils (getChatID, sendMessage)
 
 quiz :: BotHandler.BotHandler
 quiz message = do
+  let pollMessage = makePollMessage (getChatID message)
   sendMessage $ keyboardMessage message keyboard "Wassup?"
   answer <- pollMessage getAnswer
   sendMessage $ textMessage message answer
