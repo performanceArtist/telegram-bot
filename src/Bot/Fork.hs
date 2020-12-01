@@ -1,16 +1,18 @@
 module Bot.Fork where
 
 import qualified Bot.Model.Bot as Bot
+import           Control.Arrow ((>>>))
 import           Control.Concurrent (forkFinally)
 import           Control.Monad.Except (catchError)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Reader (ask)
 import           Control.Monad.State (get, gets)
 import           Data.Function ((&))
-import           Data.IORef (modifyIORef, writeIORef)
+import           Data.IORef (modifyIORef)
 import qualified Data.Set as Set
 
 import qualified Api.Get.Message
+import qualified Api.Get.Update
 import           Bot.Model.BotError as BotError
 import qualified Bot.Model.BotState as BotState
 import qualified Bot.Model.Handler as BotHandler
@@ -22,7 +24,7 @@ forkHandler handler message = do
   chatIDsRef <- gets BotState.forkedChatIDs
   updatesRef <- gets BotState.updates
   liftIO $ modifyIORef chatIDsRef (Set.insert chatID)
-  liftIO $ writeIORef updatesRef []
+  liftIO $ modifyIORef updatesRef (filter $ Api.Get.Update.message >>> maybe True (getChatID >>> (/= chatID)))
   let program = catchError (handler message) reportError
   let cleanup = const $ modifyIORef chatIDsRef (Set.delete chatID)
   env <- ask
